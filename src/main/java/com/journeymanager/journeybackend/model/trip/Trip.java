@@ -27,6 +27,11 @@ public class Trip {
 
     @Column(nullable = false)
     private LocalDateTime createdAt;
+    @Column
+    private LocalDateTime startedAt;
+
+    @Column
+    private LocalDateTime completedAt;
 
     public Trip() {}
 
@@ -44,7 +49,8 @@ public class Trip {
     }
 
     public Long getId() { return id; }
-
+    public LocalDateTime getStartedAt() { return startedAt; }
+    public LocalDateTime getCompletedAt() { return completedAt; }
     public Long getTenantId() { return tenantId; }
 
     public String getTitle() { return title; }
@@ -56,5 +62,7 @@ public class Trip {
     public TripStatus getStatus() { return status; }
     public void setStatus(TripStatus status) { this.status = status; }
 
+    public void setStartedAt(LocalDateTime startedAt) { this.startedAt = startedAt; }
+    public void setCompletedAt(LocalDateTime completedAt) { this.completedAt = completedAt; }
     public LocalDateTime getCreatedAt() { return createdAt; }
 }

@@ -24,10 +24,10 @@ public class TripController {
 
     @PostMapping
     public Trip create(@RequestBody Trip trip) {
-        System.out.println("TripController CREATE called");
         return service.create(trip);
     }
 
+    // ADMIN approve/reject
     @PutMapping("/{id}/status")
     public Trip updateStatus(
             @PathVariable Long id,
@@ -35,4 +35,23 @@ public class TripController {
     ) {
         return service.updateStatus(id, status);
     }
+
+    // USER start journey
+    @PutMapping("/{id}/start")
+    public Trip start(@PathVariable Long id) {
+        return service.startJourney(id);
+    }
+
+    // USER complete journey
+    @PutMapping("/{id}/complete")
+    public Trip complete(@PathVariable Long id) {
+        return service.completeJourney(id);
+    }
+
+    // USER emergency trigger
+    @PutMapping("/{id}/emergency")
+    public Trip emergency(@PathVariable Long id) {
+        return service.triggerEmergency(id);
+    }
+
 }
