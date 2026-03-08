@@ -8,5 +8,9 @@ import java.util.Optional;
 
 public interface UserRepository extends JpaRepository<User, Long> {
 
+    // Used during JWT login
+    Optional<User> findByEmail(String email);
+
+    // Used for tenant-specific queries
     Optional<User> findByEmailAndTenant(String email, Tenant tenant);
 }

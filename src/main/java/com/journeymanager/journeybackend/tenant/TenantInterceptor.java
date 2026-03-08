@@ -1,54 +1,29 @@
 package com.journeymanager.journeybackend.tenant;
 
-import com.journeymanager.journeybackend.entity.Tenant;
-import com.journeymanager.journeybackend.model.user.User;
-import com.journeymanager.journeybackend.security.RoleContext;
-import com.journeymanager.journeybackend.service.TenantService;
-import com.journeymanager.journeybackend.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
-import com.journeymanager.journeybackend.tenant.TenantContext;
+
 @Component
 public class TenantInterceptor implements HandlerInterceptor {
-
-    private final TenantService tenantService;
-    private final UserService userService;
-
-    public TenantInterceptor(TenantService tenantService,
-                             UserService userService) {
-        this.tenantService = tenantService;
-        this.userService = userService;
-    }
 
     @Override
     public boolean preHandle(HttpServletRequest request,
                              HttpServletResponse response,
                              Object handler) {
 
-        // 1️⃣ Resolve Tenant
-        String tenantHeader = request.getHeader("X-Tenant-Id");
-        if (tenantHeader == null || tenantHeader.isBlank()) {
-            throw new RuntimeException("Missing X-Tenant-Id header");
+        String path = request.getRequestURI();
+
+        if (path.startsWith("/api/auth")) {
+            return true;
         }
 
-        Tenant tenant = tenantService.getTenantBySubdomain(tenantHeader);
+        String tenant = (String) request.getAttribute("tenant");
 
-// VERY IMPORTANT
-        TenantContext.setTenantId(tenant.getId());
-
-        // 2️⃣ Resolve User Email
-        String email = request.getHeader("X-User-Email");
-        if (email == null || email.isBlank()) {
-            throw new RuntimeException("Missing X-User-Email header");
+        if (tenant == null) {
+            throw new RuntimeException("Tenant missing in JWT token");
         }
-
-        // 3️⃣ Load User from DB
-        User user = userService.loadUser(email, tenant);
-
-        // 4️⃣ Set RoleContext FROM DATABASE
-        RoleContext.setRole(user.getRole());
 
         return true;
     }
