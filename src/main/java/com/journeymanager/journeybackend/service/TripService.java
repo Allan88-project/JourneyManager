@@ -1,12 +1,12 @@
-
 package com.journeymanager.journeybackend.service;
 
 import com.journeymanager.journeybackend.exception.AccessDeniedException;
 import com.journeymanager.journeybackend.model.trip.Trip;
 import com.journeymanager.journeybackend.model.trip.TripStatus;
 import com.journeymanager.journeybackend.repository.TripRepository;
-import com.journeymanager.journeybackend.security.RoleContext;
-import com.journeymanager.journeybackend.security.UserRole;
+import com.journeymanager.journeybackend.security.CustomUserDetails;
+
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -19,6 +19,16 @@ public class TripService {
 
     public TripService(TripRepository tripRepository) {
         this.tripRepository = tripRepository;
+    }
+
+    /**
+     * Helper method to get authenticated user from Spring Security
+     */
+    private CustomUserDetails getCurrentUser() {
+        return (CustomUserDetails) SecurityContextHolder
+                .getContext()
+                .getAuthentication()
+                .getPrincipal();
     }
 
     // USER create trip
@@ -34,7 +44,9 @@ public class TripService {
     // ADMIN approve / reject
     public Trip updateStatus(Long tripId, TripStatus newStatus) {
 
-        if (RoleContext.getRole() != UserRole.ADMIN) {
+        CustomUserDetails user = getCurrentUser();
+
+        if (!"ADMIN".equals(user.getRole())) {
             throw new AccessDeniedException("Only ADMIN can approve or reject trips");
         }
 
@@ -53,7 +65,9 @@ public class TripService {
     // USER start journey
     public Trip startJourney(Long tripId) {
 
-        if (RoleContext.getRole() != UserRole.USER) {
+        CustomUserDetails user = getCurrentUser();
+
+        if (!"USER".equals(user.getRole())) {
             throw new AccessDeniedException("Only USER can start journey");
         }
 
@@ -73,7 +87,9 @@ public class TripService {
     // USER emergency
     public Trip triggerEmergency(Long tripId) {
 
-        if (RoleContext.getRole() != UserRole.USER) {
+        CustomUserDetails user = getCurrentUser();
+
+        if (!"USER".equals(user.getRole())) {
             throw new AccessDeniedException("Only USER can trigger emergency");
         }
 
@@ -92,7 +108,9 @@ public class TripService {
     // USER complete journey
     public Trip completeJourney(Long tripId) {
 
-        if (RoleContext.getRole() != UserRole.USER) {
+        CustomUserDetails user = getCurrentUser();
+
+        if (!"USER".equals(user.getRole())) {
             throw new AccessDeniedException("Only USER can complete journey");
         }
 

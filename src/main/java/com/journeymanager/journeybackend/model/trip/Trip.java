@@ -1,6 +1,5 @@
 package com.journeymanager.journeybackend.model.trip;
 
-import com.journeymanager.journeybackend.tenant.TenantContext;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
@@ -27,6 +26,7 @@ public class Trip {
 
     @Column(nullable = false)
     private LocalDateTime createdAt;
+
     @Column
     private LocalDateTime startedAt;
 
@@ -37,7 +37,6 @@ public class Trip {
 
     @PrePersist
     public void prePersist() {
-        this.tenantId = TenantContext.getTenantId();
 
         if (this.status == null) {
             this.status = TripStatus.PENDING;
@@ -48,21 +47,59 @@ public class Trip {
         }
     }
 
-    public Long getId() { return id; }
-    public LocalDateTime getStartedAt() { return startedAt; }
-    public LocalDateTime getCompletedAt() { return completedAt; }
-    public Long getTenantId() { return tenantId; }
+    public Long getId() {
+        return id;
+    }
 
-    public String getTitle() { return title; }
-    public void setTitle(String title) { this.title = title; }
+    public Long getTenantId() {
+        return tenantId;
+    }
 
-    public String getDescription() { return description; }
-    public void setDescription(String description) { this.description = description; }
+    public void setTenantId(Long tenantId) {
+        this.tenantId = tenantId;
+    }
 
-    public TripStatus getStatus() { return status; }
-    public void setStatus(TripStatus status) { this.status = status; }
+    public String getTitle() {
+        return title;
+    }
 
-    public void setStartedAt(LocalDateTime startedAt) { this.startedAt = startedAt; }
-    public void setCompletedAt(LocalDateTime completedAt) { this.completedAt = completedAt; }
-    public LocalDateTime getCreatedAt() { return createdAt; }
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public TripStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(TripStatus status) {
+        this.status = status;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public LocalDateTime getStartedAt() {
+        return startedAt;
+    }
+
+    public void setStartedAt(LocalDateTime startedAt) {
+        this.startedAt = startedAt;
+    }
+
+    public LocalDateTime getCompletedAt() {
+        return completedAt;
+    }
+
+    public void setCompletedAt(LocalDateTime completedAt) {
+        this.completedAt = completedAt;
+    }
 }
