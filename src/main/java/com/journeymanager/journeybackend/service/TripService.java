@@ -1,11 +1,13 @@
 package com.journeymanager.journeybackend.service;
 
-import com.journeymanager.journeybackend.exception.AccessDeniedException;
 import com.journeymanager.journeybackend.model.trip.Trip;
 import com.journeymanager.journeybackend.model.trip.TripStatus;
 import com.journeymanager.journeybackend.repository.TripRepository;
 import com.journeymanager.journeybackend.security.CustomUserDetails;
 
+import jakarta.persistence.EntityNotFoundException;
+
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
@@ -21,61 +23,89 @@ public class TripService {
         this.tripRepository = tripRepository;
     }
 
-    /**
-     * Helper method to get authenticated user from Spring Security
+    /*
+     * TENANT CONTEXT
      */
-    private CustomUserDetails getCurrentUser() {
-        return (CustomUserDetails) SecurityContextHolder
-                .getContext()
-                .getAuthentication()
-                .getPrincipal();
+
+    private Long getCurrentTenantId() {
+
+        Authentication authentication =
+                SecurityContextHolder.getContext().getAuthentication();
+
+        CustomUserDetails user =
+                (CustomUserDetails) authentication.getPrincipal();
+
+        return user.getTenantId();
     }
 
-    // USER create trip
+    /*
+     * BASIC OPERATIONS
+     */
+
+    public List<Trip> findAll() {
+
+        Long tenantId = getCurrentTenantId();
+
+        return tripRepository.findByTenantId(tenantId);
+    }
+
     public Trip create(Trip trip) {
         return tripRepository.save(trip);
     }
 
-    // list trips
-    public List<Trip> findAll() {
-        return tripRepository.findAll();
+    /*
+     * TENANT SAFE TRIP FETCH
+     */
+
+    private Trip getTripOrThrow(Long id) {
+
+        Long tenantId = getCurrentTenantId();
+
+        return tripRepository
+                .findByIdAndTenantId(id, tenantId)
+                .orElseThrow(() -> new EntityNotFoundException("Trip not found"));
     }
 
-    // ADMIN approve / reject
-    public Trip updateStatus(Long tripId, TripStatus newStatus) {
+    /*
+     * ADMIN ACTIONS
+     */
 
-        CustomUserDetails user = getCurrentUser();
+    public Trip approveTrip(Long tripId) {
 
-        if (!"ADMIN".equals(user.getRole())) {
-            throw new AccessDeniedException("Only ADMIN can approve or reject trips");
-        }
-
-        Trip trip = tripRepository.findById(tripId)
-                .orElseThrow(() -> new RuntimeException("Trip not found"));
+        Trip trip = getTripOrThrow(tripId);
 
         if (trip.getStatus() != TripStatus.PENDING) {
-            throw new IllegalStateException("Trip already finalized");
+            throw new IllegalStateException("Only PENDING trips can be approved");
         }
 
-        trip.setStatus(newStatus);
+        trip.setStatus(TripStatus.APPROVED);
 
         return tripRepository.save(trip);
     }
 
-    // USER start journey
-    public Trip startJourney(Long tripId) {
+    public Trip rejectTrip(Long tripId) {
 
-        CustomUserDetails user = getCurrentUser();
+        Trip trip = getTripOrThrow(tripId);
 
-        if (!"USER".equals(user.getRole())) {
-            throw new AccessDeniedException("Only USER can start journey");
+        if (trip.getStatus() != TripStatus.PENDING) {
+            throw new IllegalStateException("Only PENDING trips can be rejected");
         }
 
-        Trip trip = tripRepository.findById(tripId)
-                .orElseThrow(() -> new RuntimeException("Trip not found"));
+        trip.setStatus(TripStatus.REJECTED);
+
+        return tripRepository.save(trip);
+    }
+
+    /*
+     * USER ACTIONS
+     */
+
+    public Trip startTrip(Long tripId) {
+
+        Trip trip = getTripOrThrow(tripId);
 
         if (trip.getStatus() != TripStatus.APPROVED) {
-            throw new IllegalStateException("Trip must be APPROVED to start");
+            throw new IllegalStateException("Trip must be APPROVED before starting");
         }
 
         trip.setStatus(TripStatus.IN_PROGRESS);
@@ -84,46 +114,29 @@ public class TripService {
         return tripRepository.save(trip);
     }
 
-    // USER emergency
-    public Trip triggerEmergency(Long tripId) {
+    public Trip completeTrip(Long tripId) {
 
-        CustomUserDetails user = getCurrentUser();
-
-        if (!"USER".equals(user.getRole())) {
-            throw new AccessDeniedException("Only USER can trigger emergency");
-        }
-
-        Trip trip = tripRepository.findById(tripId)
-                .orElseThrow(() -> new RuntimeException("Trip not found"));
+        Trip trip = getTripOrThrow(tripId);
 
         if (trip.getStatus() != TripStatus.IN_PROGRESS) {
-            throw new IllegalStateException("Emergency allowed only during IN_PROGRESS");
-        }
-
-        trip.setStatus(TripStatus.EMERGENCY);
-
-        return tripRepository.save(trip);
-    }
-
-    // USER complete journey
-    public Trip completeJourney(Long tripId) {
-
-        CustomUserDetails user = getCurrentUser();
-
-        if (!"USER".equals(user.getRole())) {
-            throw new AccessDeniedException("Only USER can complete journey");
-        }
-
-        Trip trip = tripRepository.findById(tripId)
-                .orElseThrow(() -> new RuntimeException("Trip not found"));
-
-        if (trip.getStatus() != TripStatus.IN_PROGRESS &&
-                trip.getStatus() != TripStatus.EMERGENCY) {
-            throw new IllegalStateException("Trip must be IN_PROGRESS or EMERGENCY to complete");
+            throw new IllegalStateException("Only IN_PROGRESS trips can be completed");
         }
 
         trip.setStatus(TripStatus.COMPLETED);
         trip.setCompletedAt(LocalDateTime.now());
+
+        return tripRepository.save(trip);
+    }
+
+    public Trip emergencyTrip(Long tripId) {
+
+        Trip trip = getTripOrThrow(tripId);
+
+        if (trip.getStatus() != TripStatus.IN_PROGRESS) {
+            throw new IllegalStateException("Emergency can only occur during IN_PROGRESS");
+        }
+
+        trip.setStatus(TripStatus.EMERGENCY);
 
         return tripRepository.save(trip);
     }

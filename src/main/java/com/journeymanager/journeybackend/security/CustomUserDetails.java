@@ -10,20 +10,28 @@ import java.util.Collections;
 
 public class CustomUserDetails implements UserDetails {
 
-    private final User user;
+    private final Long userId;
+    private final Long tenantId;
     private final String tenantCode;
+    private final String email;
+    private final String password;
+    private final String role;
 
     public CustomUserDetails(User user, String tenantCode) {
-        this.user = user;
+        this.userId = user.getId();
+        this.tenantId = user.getTenant().getId();
         this.tenantCode = tenantCode;
+        this.email = user.getEmail();
+        this.password = user.getPassword();
+        this.role = user.getRole().name();
     }
 
     public Long getUserId() {
-        return user.getId();
+        return userId;
     }
 
     public Long getTenantId() {
-        return user.getTenant().getId();
+        return tenantId;
     }
 
     public String getTenantCode() {
@@ -31,24 +39,24 @@ public class CustomUserDetails implements UserDetails {
     }
 
     public String getRole() {
-        return user.getRole().name();
+        return role;
     }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return Collections.singletonList(
-                new SimpleGrantedAuthority("ROLE_" + user.getRole().name())
+                new SimpleGrantedAuthority("ROLE_" + role)
         );
     }
 
     @Override
     public String getPassword() {
-        return user.getPassword();
+        return password;
     }
 
     @Override
     public String getUsername() {
-        return user.getEmail();
+        return email;
     }
 
     @Override

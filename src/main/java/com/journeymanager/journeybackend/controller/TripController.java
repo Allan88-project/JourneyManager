@@ -1,13 +1,16 @@
 package com.journeymanager.journeybackend.controller;
 
+import com.journeymanager.journeybackend.dto.ApiResponse;
 import com.journeymanager.journeybackend.model.trip.Trip;
 import com.journeymanager.journeybackend.model.trip.TripStatus;
 import com.journeymanager.journeybackend.security.CustomUserDetails;
 import com.journeymanager.journeybackend.service.TripService;
-import org.springframework.security.access.prepost.PreAuthorize;
+
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -22,29 +25,47 @@ public class TripController {
         this.tripService = tripService;
     }
 
-    // LIST trips
+    /*
+     * LIST TRIPS (tenant-safe via service layer)
+     */
     @GetMapping
-    public ResponseEntity<List<Trip>> getAll() {
-        return ResponseEntity.ok(tripService.findAll());
+    public ResponseEntity<ApiResponse<List<Trip>>> getAll() {
+
+        List<Trip> trips = tripService.findAll();
+
+        return ResponseEntity.ok(
+                ApiResponse.success(trips)
+        );
     }
+
+    /*
+     * DEBUG AUTH (JWT verification)
+     */
     @GetMapping("/debug")
-    public ResponseEntity<String> debugAuth() {
+    public ResponseEntity<ApiResponse<String>> debugAuth() {
 
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 
         if (auth == null) {
-            return ResponseEntity.ok("Authentication is NULL");
+            return ResponseEntity.ok(
+                    ApiResponse.success("Authentication is NULL")
+            );
         }
 
+        String debug = "Principal: " + auth.getPrincipal() +
+                " | Authorities: " + auth.getAuthorities();
+
         return ResponseEntity.ok(
-                "Principal: " + auth.getPrincipal() +
-                        " | Authorities: " + auth.getAuthorities()
+                ApiResponse.success(debug)
         );
     }
-    // USER create trip
+
+    /*
+     * USER CREATE TRIP
+     */
     @PreAuthorize("hasRole('USER')")
     @PostMapping
-    public ResponseEntity<Trip> createTrip(@RequestBody Trip trip) {
+    public ResponseEntity<ApiResponse<Trip>> createTrip(@RequestBody Trip trip) {
 
         Authentication authentication =
                 SecurityContextHolder.getContext().getAuthentication();
@@ -52,42 +73,86 @@ public class TripController {
         CustomUserDetails user =
                 (CustomUserDetails) authentication.getPrincipal();
 
+        // enforce tenant ownership
         trip.setTenantId(user.getTenantId());
+
+        // enforce initial lifecycle state
         trip.setStatus(TripStatus.PENDING);
 
         Trip saved = tripService.create(trip);
 
-        return ResponseEntity.ok(saved);
+        return ResponseEntity.ok(
+                ApiResponse.success(saved)
+        );
     }
 
-    // ADMIN approve / reject
+    /*
+     * ADMIN APPROVE TRIP
+     */
     @PreAuthorize("hasRole('ADMIN')")
-    @PutMapping("/{id}/status")
-    public ResponseEntity<Trip> updateStatus(
-            @PathVariable Long id,
-            @RequestParam TripStatus status) {
-        return ResponseEntity.ok(tripService.updateStatus(id, status));
+    @PutMapping("/{id}/approve")
+    public ResponseEntity<ApiResponse<Trip>> approveTrip(@PathVariable Long id) {
+
+        Trip trip = tripService.approveTrip(id);
+
+        return ResponseEntity.ok(
+                ApiResponse.success(trip)
+        );
     }
 
-    // USER start journey
+    /*
+     * ADMIN REJECT TRIP
+     */
+    @PreAuthorize("hasRole('ADMIN')")
+    @PutMapping("/{id}/reject")
+    public ResponseEntity<ApiResponse<Trip>> rejectTrip(@PathVariable Long id) {
+
+        Trip trip = tripService.rejectTrip(id);
+
+        return ResponseEntity.ok(
+                ApiResponse.success(trip)
+        );
+    }
+
+    /*
+     * USER START TRIP
+     */
     @PreAuthorize("hasRole('USER')")
     @PutMapping("/{id}/start")
-    public ResponseEntity<Trip> start(@PathVariable Long id) {
-        return ResponseEntity.ok(tripService.startJourney(id));
+    public ResponseEntity<ApiResponse<Trip>> startTrip(@PathVariable Long id) {
+
+        Trip trip = tripService.startTrip(id);
+
+        return ResponseEntity.ok(
+                ApiResponse.success(trip)
+        );
     }
 
-    // USER complete journey
+    /*
+     * USER COMPLETE TRIP
+     */
     @PreAuthorize("hasRole('USER')")
     @PutMapping("/{id}/complete")
-    public ResponseEntity<Trip> complete(@PathVariable Long id) {
-        return ResponseEntity.ok(tripService.completeJourney(id));
+    public ResponseEntity<ApiResponse<Trip>> completeTrip(@PathVariable Long id) {
+
+        Trip trip = tripService.completeTrip(id);
+
+        return ResponseEntity.ok(
+                ApiResponse.success(trip)
+        );
     }
 
-    // USER emergency trigger
+    /*
+     * USER EMERGENCY
+     */
     @PreAuthorize("hasRole('USER')")
     @PutMapping("/{id}/emergency")
-    public ResponseEntity<Trip> emergency(@PathVariable Long id) {
-        return ResponseEntity.ok(tripService.triggerEmergency(id));
-    }
+    public ResponseEntity<ApiResponse<Trip>> emergencyTrip(@PathVariable Long id) {
 
+        Trip trip = tripService.emergencyTrip(id);
+
+        return ResponseEntity.ok(
+                ApiResponse.success(trip)
+        );
+    }
 }

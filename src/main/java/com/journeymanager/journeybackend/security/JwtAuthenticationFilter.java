@@ -29,12 +29,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                                     FilterChain filterChain)
             throws ServletException, IOException {
 
+        String authHeader = request.getHeader("Authorization");
+
+        String token = null;
+        String email = null;
+
         try {
-
-            String authHeader = request.getHeader("Authorization");
-
-            String token = null;
-            String email = null;
 
             if (authHeader != null && authHeader.startsWith("Bearer ")) {
                 token = authHeader.substring(7);
@@ -65,8 +65,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 }
             }
 
-        } catch (Exception ignored) {
-            // If JWT parsing fails, request continues without authentication
+        } catch (Exception e) {
+            // Invalid token or parsing failure — request continues without authentication
         }
 
         filterChain.doFilter(request, response);
