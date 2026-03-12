@@ -2,6 +2,7 @@ package com.journeymanager.journeybackend.service;
 
 import com.journeymanager.journeybackend.model.trip.Trip;
 import com.journeymanager.journeybackend.model.trip.TripStatus;
+import com.journeymanager.journeybackend.model.trip.TripStateMachine;
 import com.journeymanager.journeybackend.repository.TripRepository;
 import com.journeymanager.journeybackend.security.CustomUserDetails;
 
@@ -70,26 +71,22 @@ public class TripService {
      * ADMIN ACTIONS
      */
 
-    public Trip approveTrip(Long tripId) {
+    public Trip approveTrip(Long id) {
 
-        Trip trip = getTripOrThrow(tripId);
+        Trip trip = getTripOrThrow(id);
 
-        if (trip.getStatus() != TripStatus.PENDING) {
-            throw new IllegalStateException("Only PENDING trips can be approved");
-        }
+        TripStateMachine.validateApprove(trip);
 
         trip.setStatus(TripStatus.APPROVED);
 
         return tripRepository.save(trip);
     }
 
-    public Trip rejectTrip(Long tripId) {
+    public Trip rejectTrip(Long id) {
 
-        Trip trip = getTripOrThrow(tripId);
+        Trip trip = getTripOrThrow(id);
 
-        if (trip.getStatus() != TripStatus.PENDING) {
-            throw new IllegalStateException("Only PENDING trips can be rejected");
-        }
+        TripStateMachine.validateReject(trip);
 
         trip.setStatus(TripStatus.REJECTED);
 
@@ -104,9 +101,7 @@ public class TripService {
 
         Trip trip = getTripOrThrow(tripId);
 
-        if (trip.getStatus() != TripStatus.APPROVED) {
-            throw new IllegalStateException("Trip must be APPROVED before starting");
-        }
+        TripStateMachine.validateStart(trip);
 
         trip.setStatus(TripStatus.IN_PROGRESS);
         trip.setStartedAt(LocalDateTime.now());
@@ -118,9 +113,7 @@ public class TripService {
 
         Trip trip = getTripOrThrow(tripId);
 
-        if (trip.getStatus() != TripStatus.IN_PROGRESS) {
-            throw new IllegalStateException("Only IN_PROGRESS trips can be completed");
-        }
+        TripStateMachine.validateComplete(trip);
 
         trip.setStatus(TripStatus.COMPLETED);
         trip.setCompletedAt(LocalDateTime.now());
@@ -132,9 +125,7 @@ public class TripService {
 
         Trip trip = getTripOrThrow(tripId);
 
-        if (trip.getStatus() != TripStatus.IN_PROGRESS) {
-            throw new IllegalStateException("Emergency can only occur during IN_PROGRESS");
-        }
+        TripStateMachine.validateEmergency(trip);
 
         trip.setStatus(TripStatus.EMERGENCY);
 

@@ -17,19 +17,24 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final JwtUtil jwtUtil;
     private final CustomUserDetailsService userDetailsService;
 
-    public JwtAuthenticationFilter(JwtUtil jwtUtil,
-                                   CustomUserDetailsService userDetailsService) {
+    public JwtAuthenticationFilter(
+            JwtUtil jwtUtil,
+            CustomUserDetailsService userDetailsService
+    ) {
         this.jwtUtil = jwtUtil;
         this.userDetailsService = userDetailsService;
     }
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request,
-                                    HttpServletResponse response,
-                                    FilterChain filterChain)
-            throws ServletException, IOException {
+    protected void doFilterInternal(
+            HttpServletRequest request,
+            HttpServletResponse response,
+            FilterChain filterChain
+    ) throws ServletException, IOException {
 
+        // DEBUG: show incoming Authorization header
         String authHeader = request.getHeader("Authorization");
+        System.out.println("AUTH HEADER RECEIVED: " + authHeader);
 
         String token = null;
         String email = null;
@@ -37,8 +42,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         try {
 
             if (authHeader != null && authHeader.startsWith("Bearer ")) {
+
                 token = authHeader.substring(7);
+                System.out.println("JWT TOKEN EXTRACTED: " + token);
+
                 email = jwtUtil.extractUsername(token);
+                System.out.println("JWT USERNAME: " + email);
             }
 
             if (email != null &&
@@ -47,7 +56,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 CustomUserDetails userDetails =
                         (CustomUserDetails) userDetailsService.loadUserByUsername(email);
 
-                if (jwtUtil.isTokenValid(token)) {
+                boolean valid = jwtUtil.isTokenValid(token);
+                System.out.println("JWT VALID: " + valid);
+
+                if (valid) {
 
                     UsernamePasswordAuthenticationToken authentication =
                             new UsernamePasswordAuthenticationToken(
@@ -61,12 +73,19 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                                     .buildDetails(request)
                     );
 
-                    SecurityContextHolder.getContext().setAuthentication(authentication);
+                    System.out.println("AUTHORITIES: " + userDetails.getAuthorities());
+
+                    SecurityContextHolder
+                            .getContext()
+                            .setAuthentication(authentication);
+
+                    System.out.println("SECURITY CONTEXT AUTHENTICATED");
                 }
             }
 
         } catch (Exception e) {
-            // Invalid token or parsing failure — request continues without authentication
+
+            System.out.println("JWT FILTER ERROR: " + e.getMessage());
         }
 
         filterChain.doFilter(request, response);
