@@ -1,7 +1,7 @@
 package com.journeymanager.journeybackend.controller;
 
 import com.journeymanager.journeybackend.dto.ApiResponse;
-import com.journeymanager.journeybackend.model.trip.Trip;
+import com.journeymanager.journeybackend.trip.domain.Trip;
 import com.journeymanager.journeybackend.trip.domain.TripStatus;
 import com.journeymanager.journeybackend.security.CustomUserDetails;
 import com.journeymanager.journeybackend.service.TripService;

@@ -1,6 +1,6 @@
 package com.journeymanager.journeybackend.repository;
 
-import com.journeymanager.journeybackend.model.trip.Trip;
+import com.journeymanager.journeybackend.trip.domain.Trip;
 import org.springframework.data.jpa.repository.JpaRepository;
 import com.journeymanager.journeybackend.trip.domain.TripStatus;
 import java.util.List;

@@ -1,7 +1,5 @@
 package com.journeymanager.journeybackend.trip.domain;
 
-import com.journeymanager.journeybackend.model.trip.Trip;
-
 public class TripStateMachine {
 
     public static void validateApprove(Trip trip) {

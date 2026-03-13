@@ -1,6 +1,6 @@
 package com.journeymanager.journeybackend.service;
 
-import com.journeymanager.journeybackend.model.trip.Trip;
+import com.journeymanager.journeybackend.trip.domain.Trip;
 import com.journeymanager.journeybackend.trip.domain.TripStatus;
 import com.journeymanager.journeybackend.trip.domain.TripStateMachine;
 import com.journeymanager.journeybackend.repository.TripRepository;
