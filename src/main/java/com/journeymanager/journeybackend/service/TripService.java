@@ -77,12 +77,7 @@ public class TripService {
         );
 
         // Keep existing audit logging (non-breaking)
-        auditService.log(
-                saved.getId(),
-                "TRIP_CREATED",
-                getCurrentUsername(),
-                "USER"
-        );
+
 
         return saved;
     }
@@ -114,12 +109,7 @@ public class TripService {
 
         Trip saved = tripRepository.save(trip);
 
-        auditService.log(
-                saved.getId(),
-                "TRIP_APPROVED",
-                getCurrentUsername(),
-                "ADMIN"
-        );
+
 
         return saved;
     }
@@ -152,12 +142,7 @@ public class TripService {
         eventPublisher.publish(
                 new TripStartedEvent(saved.getId(), getCurrentUsername())
         );
-        auditService.log(
-                saved.getId(),
-                "TRIP_STARTED",
-                getCurrentUsername(),
-                "USER"
-        );
+
 
         return saved;
     }
@@ -175,12 +160,7 @@ public class TripService {
         eventPublisher.publish(
                 new TripCompletedEvent(saved.getId(), getCurrentUsername())
         );
-        auditService.log(
-                saved.getId(),
-                "TRIP_COMPLETED",
-                getCurrentUsername(),
-                "USER"
-        );
+
 
         return saved;
     }
