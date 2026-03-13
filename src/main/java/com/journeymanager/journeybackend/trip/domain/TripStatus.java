@@ -1,4 +1,4 @@
-package com.journeymanager.journeybackend.model.trip;
+package com.journeymanager.journeybackend.trip.domain;
 
 public enum TripStatus {
     PENDING,

@@ -1,5 +1,7 @@
 package com.journeymanager.journeybackend.model.trip;
 
+import com.journeymanager.journeybackend.trip.domain.TripStatus;
+
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 

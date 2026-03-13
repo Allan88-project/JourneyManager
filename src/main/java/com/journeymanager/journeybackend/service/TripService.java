@@ -1,8 +1,8 @@
 package com.journeymanager.journeybackend.service;
 
 import com.journeymanager.journeybackend.model.trip.Trip;
-import com.journeymanager.journeybackend.model.trip.TripStatus;
-import com.journeymanager.journeybackend.model.trip.TripStateMachine;
+import com.journeymanager.journeybackend.trip.domain.TripStatus;
+import com.journeymanager.journeybackend.trip.domain.TripStateMachine;
 import com.journeymanager.journeybackend.repository.TripRepository;
 import com.journeymanager.journeybackend.security.CustomUserDetails;
 import jakarta.persistence.EntityNotFoundException;
