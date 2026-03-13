@@ -1,4 +1,4 @@
-package com.journeymanager.journeybackend.service;
+package com.journeymanager.journeybackend.analytics.service;
 
 import com.journeymanager.journeybackend.analytics.dto.AdminAnalyticsResponse;
 import com.journeymanager.journeybackend.trip.domain.TripStatus;

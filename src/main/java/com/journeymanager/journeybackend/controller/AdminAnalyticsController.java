@@ -1,7 +1,7 @@
 package com.journeymanager.journeybackend.controller;
 
 import com.journeymanager.journeybackend.analytics.dto.AdminAnalyticsResponse;
-import com.journeymanager.journeybackend.service.AdminAnalyticsService;
+import com.journeymanager.journeybackend.analytics.service.AdminAnalyticsService;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
