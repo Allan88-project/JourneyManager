@@ -1,6 +1,6 @@
 package com.journeymanager.journeybackend.service;
 
-import com.journeymanager.journeybackend.dto.AdminAnalyticsResponse;
+import com.journeymanager.journeybackend.analytics.dto.AdminAnalyticsResponse;
 import com.journeymanager.journeybackend.trip.domain.TripStatus;
 import com.journeymanager.journeybackend.repository.TripRepository;
 import com.journeymanager.journeybackend.security.CustomUserDetails;

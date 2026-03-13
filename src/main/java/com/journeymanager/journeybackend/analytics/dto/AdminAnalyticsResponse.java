@@ -1,4 +1,4 @@
-package com.journeymanager.journeybackend.dto;
+package com.journeymanager.journeybackend.analytics.dto;
 
 public class AdminAnalyticsResponse {
 
