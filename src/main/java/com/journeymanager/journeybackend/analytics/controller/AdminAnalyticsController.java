@@ -1,4 +1,4 @@
-package com.journeymanager.journeybackend.controller;
+package com.journeymanager.journeybackend.analytics.controller;
 
 import com.journeymanager.journeybackend.analytics.dto.AdminAnalyticsResponse;
 import com.journeymanager.journeybackend.analytics.service.AdminAnalyticsService;
