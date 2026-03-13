@@ -1,4 +1,4 @@
-package com.journeymanager.journeybackend.repository;
+package com.journeymanager.journeybackend.audit.repository;
 
 import com.journeymanager.journeybackend.audit.domain.TripAudit;
 import org.springframework.data.jpa.repository.JpaRepository;

@@ -1,7 +1,7 @@
 package com.journeymanager.journeybackend.service;
 
 import com.journeymanager.journeybackend.audit.domain.TripAudit;
-import com.journeymanager.journeybackend.repository.TripAuditRepository;
+import com.journeymanager.journeybackend.audit.repository.TripAuditRepository;
 import org.springframework.stereotype.Service;
 
 @Service
