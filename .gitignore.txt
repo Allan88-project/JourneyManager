@@ -1,0 +1,24 @@
+# Android
+.gradle/
+local.properties
+.idea/
+*.iml
+build/
+
+# Kotlin
+.kotlin/
+
+# Logs
+*.log
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Spring Boot
+journeybackend/build/
+journeybackend/.gradle/
+
+# H2 database
+*.mv.db
+*.trace.db
