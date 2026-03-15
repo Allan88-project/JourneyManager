@@ -6,7 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
 public interface TripLocationRepository extends JpaRepository<TripLocation, Long> {
-
+    List<TripLocation> findByTripIdOrderByTimestampAsc(Long tripId);
     List<TripLocation> findByTripId(Long tripId);
 
 }

@@ -12,7 +12,14 @@ public class AnalyticsBroadcaster {
     public AnalyticsBroadcaster(SimpMessagingTemplate messagingTemplate) {
         this.messagingTemplate = messagingTemplate;
     }
+    public void broadcastTripLocation(Long tripId, Object payload) {
 
+        messagingTemplate.convertAndSend(
+                "/topic/trip/" + tripId,
+                payload
+        );
+
+    }
     public void broadcast(AdminAnalyticsResponse analytics) {
         messagingTemplate.convertAndSend(
                 "/topic/admin/analytics",
