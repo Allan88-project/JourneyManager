@@ -31,10 +31,15 @@ interface ApiService {
      * AUTH
      */
 
+<<<<<<< HEAD
     @POST("api/auth/login")
     suspend fun login(
         @Body body: Map<String, String>
     ): String
+=======
+    @POST("/api/auth/login")
+    suspend fun login(@Body request: Map<String, String>): ApiResponse<String>
+>>>>>>> f3ac6ea (Milestone: Live GPS Tracking + Admin Map + JWT Auth stable)
 
     /*
      * TRIPS

@@ -20,7 +20,11 @@ import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 import com.allan88.journeymanager.data.model.Trip
 import com.allan88.journeymanager.location.LocationTrackingManager
+<<<<<<< HEAD
 import com.allan88.journeymanager.network.ApiClient
+=======
+import com.allan88.journeymanager.network.TokenManager
+>>>>>>> f3ac6ea (Milestone: Live GPS Tracking + Admin Map + JWT Auth stable)
 import com.allan88.journeymanager.viewmodel.TripViewModel
 
 @Composable
@@ -33,7 +37,11 @@ fun TripItem(
     val context = LocalContext.current
 
     val trackingManager = remember {
+<<<<<<< HEAD
         LocationTrackingManager(context, ApiClient.apiService)
+=======
+        LocationTrackingManager(context)
+>>>>>>> f3ac6ea (Milestone: Live GPS Tracking + Admin Map + JWT Auth stable)
     }
 
     val permissionLauncher =
@@ -42,7 +50,20 @@ fun TripItem(
         ) { granted ->
 
             if (granted) {
+<<<<<<< HEAD
                 trip.id?.let { trackingManager.startTracking(it) }
+=======
+
+                val token = TokenManager.getToken()
+
+                if (token.isNullOrBlank()) {
+                    Log.e("GPS_TRACKING", "TOKEN NOT READY — BLOCK GPS START")
+                    return@rememberLauncherForActivityResult
+                }
+
+                trip.id?.let { trackingManager.startTracking(it) }
+
+>>>>>>> f3ac6ea (Milestone: Live GPS Tracking + Admin Map + JWT Auth stable)
             } else {
                 Log.e("GPS_TRACKING", "Location permission denied")
             }
@@ -75,7 +96,10 @@ fun TripItem(
             /*
              * ADMIN ACTIONS
              */
+<<<<<<< HEAD
 
+=======
+>>>>>>> f3ac6ea (Milestone: Live GPS Tracking + Admin Map + JWT Auth stable)
             if (isAdmin && trip.status == "PENDING") {
 
                 Row {
@@ -111,12 +135,25 @@ fun TripItem(
             /*
              * USER START JOURNEY
              */
+<<<<<<< HEAD
 
+=======
+>>>>>>> f3ac6ea (Milestone: Live GPS Tracking + Admin Map + JWT Auth stable)
             if (!isAdmin && trip.status == "APPROVED") {
 
                 Button(
                     onClick = {
 
+<<<<<<< HEAD
+=======
+                        val token = TokenManager.getToken()
+
+                        if (token.isNullOrBlank()) {
+                            Log.e("GPS_TRACKING", "TOKEN NOT READY — BLOCK START")
+                            return@Button
+                        }
+
+>>>>>>> f3ac6ea (Milestone: Live GPS Tracking + Admin Map + JWT Auth stable)
                         trip.id?.let { id ->
 
                             viewModel.startJourney(id)
@@ -142,11 +179,16 @@ fun TripItem(
                             val lon = trip.destinationLongitude
 
                             if (lat != null && lon != null) {
+<<<<<<< HEAD
 
                                 openGoogleMaps(context, lat, lon)
 
                             } else {
 
+=======
+                                openGoogleMaps(context, lat, lon)
+                            } else {
+>>>>>>> f3ac6ea (Milestone: Live GPS Tracking + Admin Map + JWT Auth stable)
                                 Log.e("NAVIGATION", "Trip has no coordinates")
                             }
                         }
@@ -161,7 +203,10 @@ fun TripItem(
             /*
              * TRIP IN PROGRESS
              */
+<<<<<<< HEAD
 
+=======
+>>>>>>> f3ac6ea (Milestone: Live GPS Tracking + Admin Map + JWT Auth stable)
             if (!isAdmin && trip.status == "IN_PROGRESS") {
 
                 Column {
@@ -173,11 +218,16 @@ fun TripItem(
                             val lon = trip.destinationLongitude
 
                             if (lat != null && lon != null) {
+<<<<<<< HEAD
 
                                 openGoogleMaps(context, lat, lon)
 
                             } else {
 
+=======
+                                openGoogleMaps(context, lat, lon)
+                            } else {
+>>>>>>> f3ac6ea (Milestone: Live GPS Tracking + Admin Map + JWT Auth stable)
                                 Log.e("NAVIGATION", "Trip has no coordinates")
                             }
                         }
@@ -221,7 +271,10 @@ fun TripItem(
             /*
              * FINAL STATES
              */
+<<<<<<< HEAD
 
+=======
+>>>>>>> f3ac6ea (Milestone: Live GPS Tracking + Admin Map + JWT Auth stable)
             if (trip.status == "COMPLETED") {
                 Text("Journey Completed")
             }
@@ -245,16 +298,24 @@ fun openGoogleMaps(
     intent.setPackage("com.google.android.apps.maps")
 
     if (intent.resolveActivity(context.packageManager) != null) {
+<<<<<<< HEAD
 
         context.startActivity(intent)
 
     } else {
 
+=======
+        context.startActivity(intent)
+    } else {
+>>>>>>> f3ac6ea (Milestone: Live GPS Tracking + Admin Map + JWT Auth stable)
         val fallback = Intent(
             Intent.ACTION_VIEW,
             Uri.parse("https://www.google.com/maps/dir/?api=1&destination=$lat,$lng")
         )
+<<<<<<< HEAD
 
+=======
+>>>>>>> f3ac6ea (Milestone: Live GPS Tracking + Admin Map + JWT Auth stable)
         context.startActivity(fallback)
     }
 }

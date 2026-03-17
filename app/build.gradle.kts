@@ -31,9 +31,17 @@ android {
         viewBinding = true
         compose = true
     }
+<<<<<<< HEAD
     composeOptions {
         kotlinCompilerExtensionVersion = "1.5.14"
     }
+=======
+
+    composeOptions {
+        kotlinCompilerExtensionVersion = "1.5.14"
+    }
+
+>>>>>>> f3ac6ea (Milestone: Live GPS Tracking + Admin Map + JWT Auth stable)
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
@@ -46,11 +54,21 @@ android {
 
 dependencies {
 
+<<<<<<< HEAD
+=======
+    implementation(platform("androidx.compose:compose-bom:2024.04.01"))
+
+>>>>>>> f3ac6ea (Milestone: Live GPS Tracking + Admin Map + JWT Auth stable)
     implementation("androidx.core:core-ktx:1.13.1")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.8.4")
     implementation("androidx.activity:activity-compose:1.9.0")
 
+<<<<<<< HEAD
     implementation(platform("androidx.compose:compose-bom:2024.04.01"))
+=======
+    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.8.4")
+
+>>>>>>> f3ac6ea (Milestone: Live GPS Tracking + Admin Map + JWT Auth stable)
     implementation("androidx.compose.ui:ui")
     implementation("androidx.compose.ui:ui-graphics")
     implementation("androidx.compose.ui:ui-tooling-preview")
@@ -67,6 +85,12 @@ dependencies {
 
     implementation("com.google.android.gms:play-services-location:21.0.1")
 
+<<<<<<< HEAD
+=======
+    implementation("com.google.maps.android:maps-compose:4.3.0")
+    implementation("com.google.android.gms:play-services-maps:18.2.0")
+
+>>>>>>> f3ac6ea (Milestone: Live GPS Tracking + Admin Map + JWT Auth stable)
     implementation("androidx.appcompat:appcompat:1.6.1")
     implementation("androidx.recyclerview:recyclerview:1.3.2")
     implementation("androidx.constraintlayout:constraintlayout:2.1.4")

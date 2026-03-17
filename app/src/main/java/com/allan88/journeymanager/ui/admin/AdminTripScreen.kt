@@ -27,7 +27,12 @@ import androidx.compose.foundation.layout.Arrangement
 
 @Composable
 fun AdminTripScreen(
+<<<<<<< HEAD
     onBack: () -> Unit
+=======
+    onBack: () -> Unit,
+    onLiveTracking: (Long) -> Unit
+>>>>>>> f3ac6ea (Milestone: Live GPS Tracking + Admin Map + JWT Auth stable)
 ) {
 
     val repository = remember {
@@ -42,13 +47,20 @@ fun AdminTripScreen(
 
     val trips by viewModel.trips.collectAsState()
 
+<<<<<<< HEAD
 // Analytics state
+=======
+    // Analytics state
+>>>>>>> f3ac6ea (Milestone: Live GPS Tracking + Admin Map + JWT Auth stable)
     var analytics by remember { mutableStateOf<AdminAnalyticsResponse?>(null) }
 
     /*
      * WebSocket connection (LIVE updates)
      */
+<<<<<<< HEAD
 
+=======
+>>>>>>> f3ac6ea (Milestone: Live GPS Tracking + Admin Map + JWT Auth stable)
     LaunchedEffect(Unit) {
 
         webSocketManager.connect(
@@ -84,7 +96,10 @@ fun AdminTripScreen(
     /*
      * Close WebSocket when leaving screen
      */
+<<<<<<< HEAD
 
+=======
+>>>>>>> f3ac6ea (Milestone: Live GPS Tracking + Admin Map + JWT Auth stable)
     DisposableEffect(Unit) {
         onDispose {
             webSocketManager.disconnect()
@@ -94,7 +109,10 @@ fun AdminTripScreen(
     /*
      * Dashboard counters
      */
+<<<<<<< HEAD
 
+=======
+>>>>>>> f3ac6ea (Milestone: Live GPS Tracking + Admin Map + JWT Auth stable)
     val pending = analytics?.pending ?: 0
     val approved = analytics?.approved ?: 0
     val rejected = analytics?.rejected ?: 0
@@ -133,7 +151,10 @@ fun AdminTripScreen(
         /*
          * DASHBOARD
          */
+<<<<<<< HEAD
 
+=======
+>>>>>>> f3ac6ea (Milestone: Live GPS Tracking + Admin Map + JWT Auth stable)
         DashboardCard("Pending", pending.toInt())
         DashboardCard("Approved", approved.toInt())
         DashboardCard("Rejected", rejected.toInt())
@@ -147,11 +168,33 @@ fun AdminTripScreen(
 
             items(trips) { trip: Trip ->
 
+<<<<<<< HEAD
                 TripItem(
                     trip = trip,
                     viewModel = viewModel,
                     isAdmin = true
                 )
+=======
+                Column {
+
+                    TripItem(
+                        trip = trip,
+                        viewModel = viewModel,
+                        isAdmin = true
+                    )
+
+                    Spacer(modifier = Modifier.height(6.dp))
+
+                    Button(
+                        onClick = { trip.id?.let { onLiveTracking(it) } },
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Text("LIVE TRACKING")
+                    }
+
+                    Spacer(modifier = Modifier.height(12.dp))
+                }
+>>>>>>> f3ac6ea (Milestone: Live GPS Tracking + Admin Map + JWT Auth stable)
 
             }
 
@@ -187,4 +230,8 @@ fun DashboardCard(
 
     }
 
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> f3ac6ea (Milestone: Live GPS Tracking + Admin Map + JWT Auth stable)

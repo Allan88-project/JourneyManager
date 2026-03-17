@@ -4,7 +4,10 @@ import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+<<<<<<< HEAD
 import retrofit2.converter.scalars.ScalarsConverterFactory
+=======
+>>>>>>> f3ac6ea (Milestone: Live GPS Tracking + Admin Map + JWT Auth stable)
 
 object ApiClient {
 
@@ -14,6 +17,7 @@ object ApiClient {
         level = HttpLoggingInterceptor.Level.BODY
     }
 
+<<<<<<< HEAD
     private val client = OkHttpClient.Builder()
         .addInterceptor(AuthInterceptor())
         .addInterceptor(loggingInterceptor)
@@ -31,5 +35,19 @@ object ApiClient {
 
     val apiService: ApiService by lazy {
         retrofit.create(ApiService::class.java)
+=======
+    private val okHttpClient = OkHttpClient.Builder()
+        .addInterceptor(AuthInterceptor())   // ✅ CRITICAL
+        .addInterceptor(loggingInterceptor)
+        .build()
+
+    val apiService: ApiService by lazy {
+        Retrofit.Builder()
+            .baseUrl(BASE_URL)
+            .client(okHttpClient)            // ✅ USE CLIENT
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+            .create(ApiService::class.java)
+>>>>>>> f3ac6ea (Milestone: Live GPS Tracking + Admin Map + JWT Auth stable)
     }
 }

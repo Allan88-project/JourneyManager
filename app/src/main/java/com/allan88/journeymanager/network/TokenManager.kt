@@ -11,9 +11,15 @@ object TokenManager {
     fun getToken(): String? {
         return token
     }
+<<<<<<< HEAD
 
     fun clearToken() {
         token = null
     }
 
 }
+=======
+}
+
+
+>>>>>>> f3ac6ea (Milestone: Live GPS Tracking + Admin Map + JWT Auth stable)
