@@ -17,7 +17,7 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
+        ApiClient.init(application)
         // Attempt login when app starts
         lifecycleScope.launch {
 
@@ -25,23 +25,24 @@ class MainActivity : ComponentActivity() {
 
                 Log.d("AUTH", "Attempting login...")
 
-                val token = ApiClient.apiService.login(
+                val response = ApiClient.apiService.login(
                     mapOf(
-                        "email" to "user@tenant1.com",
+                        "email" to "admin@tenant1.com",
                         "password" to "password"
                     )
                 )
 
-                if (!token.isNullOrBlank()) {
+                val token = response.substringAfter("\"data\":\"").substringBefore("\"")
 
-                    TokenManager.saveToken(token)
+                if (token.isNotBlank()) {
+
+                    val tokenManager = TokenManager(applicationContext)
+                    tokenManager.saveToken(token)
 
                     Log.d("AUTH", "TOKEN SAVED: $token")
 
                 } else {
-
-                    Log.e("AUTH", "TOKEN RECEIVED BUT EMPTY")
-
+                    Log.e("AUTH", "TOKEN EXTRACTION FAILED")
                 }
 
             } catch (e: Exception) {

@@ -1,41 +1,23 @@
 package com.allan88.journeymanager.network
 
-import android.util.Log
 import okhttp3.Interceptor
 import okhttp3.Response
 
-class AuthInterceptor : Interceptor {
+class AuthInterceptor(private val tokenManager: TokenManager) : Interceptor {
 
     override fun intercept(chain: Interceptor.Chain): Response {
+        val request = chain.request()
 
-        val originalRequest = chain.request()
+        val token = tokenManager.getToken()
 
-        val token = TokenManager.getToken()
-
-        Log.d("AUTH_INTERCEPTOR", "Interceptor executing")
-        Log.d("AUTH_INTERCEPTOR", "Token from manager = $token")
-
-        val requestBuilder = originalRequest.newBuilder()
-
-        if (!token.isNullOrBlank()) {
-
-            requestBuilder.removeHeader("Authorization")
-
-            requestBuilder.addHeader(
-                "Authorization",
-                "Bearer $token"
-            )
-
-            Log.d("AUTH_INTERCEPTOR", "Authorization header attached")
-
+        val newRequest = if (!token.isNullOrEmpty()) {
+            request.newBuilder()
+                .addHeader("Authorization", "Bearer $token")
+                .build()
         } else {
-
-            Log.w("AUTH_INTERCEPTOR", "No token available — request sent without JWT")
-
+            request
         }
 
-        val request = requestBuilder.build()
-
-        return chain.proceed(request)
+        return chain.proceed(newRequest)
     }
 }

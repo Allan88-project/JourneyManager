@@ -11,7 +11,9 @@
         android:usesCleartextTraffic="true"
         android:label="Journey Manager"
         android:theme="@style/Theme.JourneyManager">
-
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyAuxpH3h5Jj3gcthaFdVjRqq5g_7IxOQqI"/>
         <activity
             android:name=".MainActivity"
             android:exported="true">

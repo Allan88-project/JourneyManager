@@ -1,19 +1,20 @@
 package com.allan88.journeymanager.network
 
-object TokenManager {
+import android.content.Context
 
-    private var token: String? = null
+class TokenManager(context: Context) {
 
-    fun saveToken(newToken: String) {
-        token = newToken
+    private val prefs = context.getSharedPreferences("auth_prefs", Context.MODE_PRIVATE)
+
+    fun saveToken(token: String) {
+        prefs.edit().putString("jwt_token", token).apply()
     }
 
     fun getToken(): String? {
-        return token
+        return prefs.getString("jwt_token", null)
     }
 
     fun clearToken() {
-        token = null
+        prefs.edit().remove("jwt_token").apply()
     }
-
 }
